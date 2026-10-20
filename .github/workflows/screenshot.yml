@@ -41,7 +41,7 @@ jobs:
         run: npm ci --prefix e2e
       # portablemc installs and starts a vanilla client, offline, without the official launcher
       - name: setup python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: '3.12'
       - name: install the client launcher
