@@ -60,11 +60,25 @@ async function waitFor (what, test, timeout = 10000) {
 
 // --- the server's config file, which Forge reloads when it changes ------------------------------------------------
 
-function setConfig (key, value) {
+const LOG = path.join(SERVER_DIR, 'logs', 'latest.log')
+const reloads = () => fs.readFileSync(LOG, 'utf8').split('Reloaded qrcraft-server.toml').length - 1
+
+/** Edits the world's config and waits until the mod says it has read it again. */
+async function setConfig (key, value) {
   const toml = fs.readFileSync(CONFIG, 'utf8')
   const pattern = new RegExp(`^(\\s*${key}\\s*=\\s*).*$`, 'm')
   assert(pattern.test(toml), `${CONFIG} has no ${key}`)
-  fs.writeFileSync(CONFIG, toml.replace(pattern, `$1${value}`))
+  const next = Buffer.from(toml.replace(pattern, `$1${value}`))
+  const before = reloads()
+  // in place, in one write and then a trim: Forge reloads on every change it sees, and a file it catches empty or cut
+  // in half - as truncate-then-write leaves it - fails to parse and stops it watching the file at all
+  const fd = fs.openSync(CONFIG, 'r+')
+  fs.writeSync(fd, next, 0, next.length, 0)
+  fs.ftruncateSync(fd, next.length)
+  fs.closeSync(fd)
+  await waitFor(`the server to reload its config for ${key} = ${value}`, () => reloads() > before)
+  // the write and the trim are two changes, so a second reload may follow the first
+  await sleep(1000)
 }
 
 // --- the bot ---------------------------------------------------------------------------------------------------------
@@ -224,8 +238,7 @@ await check('/qr book encodes the pages of the book in the hand', async () => {
 
 await sleep(COOLDOWN_MS)
 await check('with consumeEmptyMaps a code costs an empty map', async () => {
-  setConfig('consumeEmptyMaps', 'true')
-  await sleep(3000)
+  await setConfig('consumeEmptyMaps', 'true')
   await command('qr Paid for', /You need 1 empty map\(s\) in your inventory, and you have 0/)
   await rcon(`give ${NAME} map 1`)
   await waitFor('the empty map', () => bot.inventory.items().find((item) => item.name === 'map'))
@@ -233,15 +246,14 @@ await check('with consumeEmptyMaps a code costs an empty map', async () => {
   await waitFor('the empty map to be used up', () => !bot.inventory.items().some((item) => item.name === 'map'))
   await waitFor('the paid-for map', () => bot.inventory.items().find((item) => itemName(item) === 'QR: Paid for'))
 })
-setConfig('consumeEmptyMaps', 'false')
+await setConfig('consumeEmptyMaps', 'false')
 
 await sleep(COOLDOWN_MS)
 await check('with permissionLevel 2 a player who is not an operator cannot use /qr', async () => {
-  setConfig('permissionLevel', '2')
-  await sleep(3000)
+  await setConfig('permissionLevel', '2')
   await command('qr Not allowed', /Unknown or incomplete command/)
 })
-setConfig('permissionLevel', '0')
+await setConfig('permissionLevel', '0')
 
 bot.quit()
 await sleep(500)

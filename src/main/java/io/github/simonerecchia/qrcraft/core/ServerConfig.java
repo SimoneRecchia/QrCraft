@@ -1,5 +1,6 @@
 package io.github.simonerecchia.qrcraft.core;
 
+import io.github.simonerecchia.qrcraft.QrCraft;
 import io.github.simonerecchia.qrcraft.qr.QrPicture;
 import io.github.simonerecchia.qrcraft.qrcodegen.QrCode;
 
@@ -107,6 +108,8 @@ public final class ServerConfig {
 	 */
 	public static void onReload(ModConfigEvent.Reloading event) {
 		if (event.getConfig().getSpec() != SPEC) return;
+		// e2e/test.mjs waits for this line before it relies on an edit
+		QrCraft.LOGGER.info("Reloaded {}", event.getConfig().getFileName());
 		MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
 		if (server == null) return;
 		server.execute(() -> server.getPlayerList().getPlayers().forEach(player -> server.getCommands().sendCommands(player)));
