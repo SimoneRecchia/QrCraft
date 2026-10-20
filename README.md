@@ -17,7 +17,7 @@ in an item frame, and a phone reads it off the wall.
 | `/qr poster <size> color <code> <background> <text>` | both |
 | `/qr book` | the Book and Quill or Written Book in your hand, on the smallest wall it reads well on |
 | `/qr book color <code> <background>` | the same, in colour |
-| `/qr text <text>` | for a text that starts with `poster`, `color`, `book`, `text` or `help` |
+| `/qr raw <text>` | for a text that starts with `poster`, `color`, `book`, `raw` or `help` |
 | `/qr`, `/qr help` | the list above, in your language |
 
 The text is anything a phone understands: a link, a plain sentence, a code, `WIFI:T:WPA;S:<network>;P:<password>;;`

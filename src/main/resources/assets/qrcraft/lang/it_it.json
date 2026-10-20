@@ -4,7 +4,7 @@
   "qrcraft.help.poster": "/qr poster <lato> <testo>: un QR code su un muro di lato×lato mappe",
   "qrcraft.help.color": "/qr color <codice> <sfondo> <testo>: in due colori delle tinture",
   "qrcraft.help.book": "/qr book: il libro che hai in mano, per un testo più lungo di quanto permette la chat",
-  "qrcraft.help.literal": "/qr text <testo>: per un testo che inizia con poster, color, book, text o help",
+  "qrcraft.help.literal": "/qr raw <testo>: per un testo che inizia con poster, color, book, raw o help",
 
   "qrcraft.created": "Ecco il tuo QR code. Appendi la mappa in una cornice per mostrarlo.",
   "qrcraft.created.dense": "Il codice è fitto: se un telefono fatica a leggerlo, prova /qr poster 2 con lo stesso testo.",

@@ -22,7 +22,7 @@ una cornice e qualsiasi telefono la legge dal muro.
 | `/qr poster <lato> color <codice> <sfondo> <testo>` | poster e colori insieme |
 | `/qr book` | il Libro e penna (o il Libro scritto) che hai in mano |
 | `/qr book color <codice> <sfondo>` | il libro, a colori |
-| `/qr text <testo>` | per un testo che inizia con `poster`, `color`, `book`, `text` o `help` |
+| `/qr raw <testo>` | per un testo che inizia con `poster`, `color`, `book`, `raw` o `help` |
 | `/qr` oppure `/qr help` | l'elenco dei comandi |
 
 I colori si scrivono come nei comandi del gioco: `black`, `white`, `red`, `blue`, `light_blue`, `yellow`, `lime`,

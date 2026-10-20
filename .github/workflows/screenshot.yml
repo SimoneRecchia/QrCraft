@@ -1,0 +1,80 @@
+name: screenshot
+# run by hand from the actions tab: e2e/screenshot.sh photographs a QR map in an item frame with a vanilla client, and
+# the picture is committed as docs/screenshot.png to the branch the workflow ran on
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: screenshot-${{ github.ref }}
+
+jobs:
+  screenshot:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v7
+      - name: validate gradle wrapper
+        uses: gradle/actions/wrapper-validation@v6
+      - name: setup jdk
+        uses: actions/setup-java@v6
+        with:
+          java-version: '17'
+          distribution: 'microsoft'
+      - name: setup gradle
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-read-only: true
+      - name: make gradle wrapper executable
+        run: chmod +x ./gradlew
+      - name: build
+        run: ./gradlew build
+      - name: setup node
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: e2e/package-lock.json
+      - name: install the server scripts
+        run: npm ci --prefix e2e
+      # portablemc installs and starts a vanilla client, offline, without the official launcher
+      - name: setup python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: install the client launcher
+        run: pip install portablemc==5.0.6
+      - name: install a virtual display and software opengl
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends xvfb xauth xdotool imagemagick \
+            libgl1-mesa-dri libglx-mesa0 libegl1 libxrandr2 libxcursor1 libxi6 libxinerama1 libxxf86vm1 libxtst6
+      - name: take the screenshot
+        run: e2e/screenshot.sh
+      - name: keep the screenshot and the logs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: screenshot
+          path: |
+            docs/screenshot.png
+            e2e/client.log
+            e2e/server/logs/
+          if-no-files-found: ignore
+      - name: commit the screenshot
+        env:
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/screenshot.png
+          if git diff --cached --quiet; then
+            echo "the screenshot is unchanged"
+            exit 0
+          fi
+          git commit -m "Update docs/screenshot.png from the screenshot workflow"
+          # someone may have pushed while the client ran
+          git pull --rebase origin "$BRANCH"
+          git push origin "HEAD:$BRANCH"

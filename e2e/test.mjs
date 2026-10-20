@@ -89,7 +89,12 @@ bot.on('error', (e) => console.log(`bot error: ${e.stack ?? e}`))
 async function command (line, match, timeout = 10000) {
   const from = messages.length
   bot.chat(`/${line}`)
-  return waitFor(`a reply to /${line} matching ${match}`, () => messages.slice(from).find((m) => match.test(m)), timeout)
+  try {
+    return await waitFor(`a reply to /${line} matching ${match}`, () => messages.slice(from).find((m) => match.test(m)), timeout)
+  } catch (e) {
+    e.message += `; the server said ${JSON.stringify(messages.slice(from))}`
+    throw e
+  }
 }
 
 function tag (item) {
@@ -188,11 +193,22 @@ await sleep(COOLDOWN_MS)
 await check('a player whose client is in Italian is answered in Italian', async () => {
   bot.setSettings({ locale: 'it_it' })
   await sleep(500)
-  await command('qr Ciao mondo', /Ecco il tuo QR code/)
-  const held = await waitFor('the Italian map', () => (itemName(bot.heldItem) === 'QR: Ciao mondo' ? bot.heldItem : null))
-  assertEqual(await scan([[tag(held).map]]), 'Ciao mondo', 'the scanned text')
-  bot.setSettings({ locale: 'en_US' })
-  await sleep(500)
+  try {
+    await command('qr Ciao mondo', /Ecco il tuo QR code/)
+    const held = await waitFor('the Italian map', () => (itemName(bot.heldItem) === 'QR: Ciao mondo' ? bot.heldItem : null))
+    assertEqual(await scan([[tag(held).map]]), 'Ciao mondo', 'the scanned text')
+  } finally {
+    // the checks after this one expect English
+    bot.setSettings({ locale: 'en_US' })
+    await sleep(500)
+  }
+})
+
+await sleep(COOLDOWN_MS)
+await check('/qr raw encodes a text that starts like a subcommand', async () => {
+  await command('qr raw poster of the week', /Here is your QR code/)
+  const held = await waitFor('the raw map', () => (itemName(bot.heldItem) === 'QR: poster of the week' ? bot.heldItem : null))
+  assertEqual(await scan([[tag(held).map]]), 'poster of the week', 'the scanned text')
 })
 
 await sleep(COOLDOWN_MS)
@@ -201,8 +217,9 @@ await check('/qr book encodes the pages of the book in the hand', async () => {
   const book = await waitFor('the book', () => bot.inventory.items().find((item) => item.name === 'writable_book'))
   await bot.equip(book, 'hand')
   await command('qr book', /Here is your QR code/)
-  const held = await waitFor('the book\'s map', () => (itemName(bot.heldItem) === 'QR: Line one' ? bot.heldItem : null))
-  assertEqual(await scan([[tag(held).map]]), 'Line one\nLine two', 'the scanned text')
+  // the hotbar is full by now (four poster maps among them), so the map goes into the inventory
+  const map = await waitFor('the book\'s map', () => bot.inventory.items().find((item) => itemName(item) === 'QR: Line one'))
+  assertEqual(await scan([[tag(map).map]]), 'Line one\nLine two', 'the scanned text')
 })
 
 await sleep(COOLDOWN_MS)
@@ -214,7 +231,6 @@ await check('with consumeEmptyMaps a code costs an empty map', async () => {
   await waitFor('the empty map', () => bot.inventory.items().find((item) => item.name === 'map'))
   await command('qr Paid for', /Here is your QR code/)
   await waitFor('the empty map to be used up', () => !bot.inventory.items().some((item) => item.name === 'map'))
-  // the hotbar is full by now, so this one goes into the inventory
   await waitFor('the paid-for map', () => bot.inventory.items().find((item) => itemName(item) === 'QR: Paid for'))
 })
 setConfig('consumeEmptyMaps', 'false')

@@ -22,3 +22,6 @@ logs
 # end-to-end test (e2e/run.sh)
 e2e/node_modules
 e2e/server
+e2e/client
+e2e/client.log
+e2e/shot.ppm

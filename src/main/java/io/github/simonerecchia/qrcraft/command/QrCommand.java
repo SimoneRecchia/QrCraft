@@ -55,11 +55,12 @@ import net.minecraftforge.event.RegisterCommandsEvent;
  * /qr poster &lt;size&gt; [color &lt;c&gt; &lt;b&gt;] &lt;text&gt;    size x size maps, into the inventory
  * /qr color &lt;code&gt; &lt;background&gt; &lt;text&gt;
  * /qr book [color &lt;c&gt; &lt;b&gt;]                     the smallest wall the book's text reads well on
- * /qr text &lt;text&gt;    /qr help
+ * /qr raw &lt;text&gt;     /qr help
  * </pre>
  *
- * Brigadier takes a literal over the text argument, so a text starting with poster, color, book, text or help goes
- * through {@code /qr text}.  A command block reaches a player with {@code execute as}.
+ * Brigadier takes a literal over the text argument, so a text starting with poster, color, book, raw or help goes
+ * through {@code /qr raw}.  No literal may be called "text": a child of the same name as the argument is merged into
+ * it, and {@code /qr <text>} disappears.  A command block reaches a player with {@code execute as}.
  */
 public final class QrCommand {
 	private static final Cooldowns COOLDOWNS = new Cooldowns();
@@ -84,7 +85,7 @@ public final class QrCommand {
 				.requires(source -> source.hasPermission(ServerConfig.permissionLevel()))
 				.executes(QrCommand::help)
 				.then(Commands.literal("help").executes(QrCommand::help))
-				.then(Commands.literal("text").then(text(false, false)))
+				.then(Commands.literal("raw").then(text(false, false)))
 				.then(Commands.literal("poster")
 						.then(Commands.argument("size", IntegerArgumentType.integer(1, QrPicture.MAX_GRID))
 								.then(colorThenText(true))
