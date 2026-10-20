@@ -48,7 +48,7 @@ A command block reaches a player with `execute as`, e.g. `/execute as @p run qr 
 ## Configuration
 
 The server settings are stored with the world, in `serverconfig/qrcraft-server.toml`, and take effect as soon as the
-file is saved.
+file is saved: the server log says `Reloaded qrcraft-server.toml` when it has read it again.
 
 | Setting | Default | Range | What it does |
 |---|---|---|---|

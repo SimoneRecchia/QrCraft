@@ -66,19 +66,20 @@ const reloads = () => fs.readFileSync(LOG, 'utf8').split('Reloaded qrcraft-serve
 /** Edits the world's config and waits until the mod says it has read it again. */
 async function setConfig (key, value) {
   const toml = fs.readFileSync(CONFIG, 'utf8')
-  const pattern = new RegExp(`^(\\s*${key}\\s*=\\s*).*$`, 'm')
-  assert(pattern.test(toml), `${CONFIG} has no ${key}`)
-  const next = Buffer.from(toml.replace(pattern, `$1${value}`))
+  const pattern = new RegExp(`^([ \\t]*${key}[ \\t]*=[ \\t]*)(\\S+)( *)$`, 'm')
+  const match = toml.match(pattern)
+  assert(match, `${CONFIG} has no ${key}`)
+  const width = match[2].length + match[3].length
+  assert(value.length <= width, `${key} = ${value} does not fit in place of ${match[2]}`)
+  const next = Buffer.from(toml.replace(pattern, `$1${value.padEnd(width)}`))
   const before = reloads()
-  // in place, in one write and then a trim: Forge reloads on every change it sees, and a file it catches empty or cut
-  // in half - as truncate-then-write leaves it - fails to parse and stops it watching the file at all
+  // one write of the same length, padded with spaces: night-config, which watches the file for Forge, ignores a change
+  // the system reports twice before it looks, and a truncate followed by a write - or a write and a trim - is just that
   const fd = fs.openSync(CONFIG, 'r+')
   fs.writeSync(fd, next, 0, next.length, 0)
-  fs.ftruncateSync(fd, next.length)
   fs.closeSync(fd)
   await waitFor(`the server to reload its config for ${key} = ${value}`, () => reloads() > before)
-  // the write and the trim are two changes, so a second reload may follow the first
-  await sleep(1000)
+  await sleep(500)
 }
 
 // --- the bot ---------------------------------------------------------------------------------------------------------

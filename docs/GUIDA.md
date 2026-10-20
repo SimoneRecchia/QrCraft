@@ -71,7 +71,7 @@ al suo posto.
 ## Per chi gestisce il server
 
 Le impostazioni sono salvate con il mondo in `serverconfig/qrcraft-server.toml` e valgono appena salvi il file, senza
-riavviare.
+riavviare: nel log del server compare `Reloaded qrcraft-server.toml` quando la mod le ha rilette.
 
 | Impostazione | Default | Cosa fa |
 |---|---|---|
