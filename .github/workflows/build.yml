@@ -46,7 +46,7 @@ jobs:
       # the jar just built, on a real forge server, against a vanilla client: the mod's whole promise is that players
       # join without it, which no unit test can show. e2e/run.sh says what it checks
       - name: setup node
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: '22'
           cache: npm
