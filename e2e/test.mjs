@@ -23,6 +23,12 @@ const COOLDOWN_MS = 3500
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
+// every wait below has its own timeout; this is for a server that accepts the connection and then says nothing
+setTimeout(() => {
+  console.log('FAIL  the whole run took more than five minutes')
+  process.exit(1)
+}, 5 * 60 * 1000).unref()
+
 let failures = 0
 async function check (name, body) {
   try {
