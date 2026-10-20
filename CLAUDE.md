@@ -40,7 +40,9 @@ A map pixel `(x, y)` is `colors[x + y * 128]`, x to the right and y down: how th
 npm ci --prefix e2e && e2e/run.sh    # the jar on a Forge server, a vanilla bot scanning what /qr sends it
 ```
 
-The CI (`.github/workflows/build.yml`) runs both. Plain Java is tested under `src/test/java` beside what it tests,
+The CI (`.github/workflows/build.yml`) runs both. `screenshot.yml`, run by hand, photographs a framed QR map with a real
+vanilla client (`e2e/screenshot.sh`: Xvfb, Mesa, portablemc) and commits `docs/screenshot.png`; it fails unless the
+picture scans. Plain Java is tested under `src/test/java` beside what it tests,
 named `*Test`; what only a world can show goes in `e2e/test.mjs`. A new message goes in **every** language file —
 `LangTest` checks the keys and the placeholders match.
 

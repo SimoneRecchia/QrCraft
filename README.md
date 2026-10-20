@@ -3,6 +3,11 @@
 Any text, link or book as a QR code on a Minecraft map: type `/qr` and the text, take the map in your hand, hang it
 in an item frame, and a phone reads it off the wall.
 
+![A QR map in an item frame on an oak log, seen by a vanilla client](docs/screenshot.png)
+
+*A vanilla 1.20.1 client on a Forge server running QrCraft. The picture is taken by the **screenshot** workflow and
+has to scan back to this repository's address.*
+
 * **Minecraft** 1.20.1 only, **Forge** 47.4.0 or later within 47 (`mods.toml` asks for `[47.4,48)`), **Java** 17
 * **Server-side only.** On a server, only the server needs the jar: players join with a vanilla client, or a Forge
   one without QrCraft, and see and scan the maps all the same. In singleplayer, put it in your own `mods` folder.
@@ -69,7 +74,9 @@ npm ci --prefix e2e && e2e/run.sh   # the jar on a real Forge server, against a 
 
 The unit tests read every layout back with ZXing, from one map to a 4×4 poster. The end-to-end test installs a Forge
 server, joins it with a vanilla 1.20.1 bot ([mineflayer](https://github.com/PrismarineJS/mineflayer)), runs every
-command and scans the maps it is sent; the CI runs both on every pull request.
+command and scans the maps it is sent; the CI runs both on every pull request. The **screenshot** workflow, run by
+hand, starts a real vanilla client on a virtual display (`e2e/screenshot.sh`), photographs a QR map in an item frame
+and commits it as `docs/screenshot.png`.
 
 A release is cut from the Actions tab: run **release** with a version such as `0.1.0-beta.1` (a tag that does not
 exist yet is made on `main`; `-alpha`, `-beta` and `-rc` are marked pre-release). It builds the jar at that version,
