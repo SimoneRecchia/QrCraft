@@ -5,7 +5,7 @@
 #
 #   ./gradlew build && npm ci --prefix e2e && pip install portablemc && e2e/screenshot.sh
 #
-# Linux only: the client runs on a virtual display (xvfb-run) with Mesa's software OpenGL, portablemc fetches it from
+# Linux only: the client runs on a virtual display (Xvfb) with Mesa's software OpenGL, portablemc fetches it from
 # Mojang, and xdotool presses F2. The client's own files are kept in e2e/client between runs.
 set -euo pipefail
 
@@ -37,12 +37,17 @@ lang:it_it
 soundCategory_master:0.0
 OPTIONS
 
+# a display of its own, without xvfb-run: that one hands its access cookie to its child only, and xdotool and import
+# are not its child
+Xvfb :99 -screen 0 1280x720x24 -nolisten tcp > xvfb.log 2>&1 &
+XVFB_PID=$!
+sleep 2
+
 echo "starting the client"
-LIBGL_ALWAYS_SOFTWARE=1 xvfb-run -n 99 -s '-screen 0 1280x720x24' \
-  portablemc --main-dir "$CLIENT_DIR" start 1.20.1 -u "$VIEWER" --join-server 127.0.0.1 --resolution 1280x720 \
-  --jvm-policy system > client.log 2>&1 &
+LIBGL_ALWAYS_SOFTWARE=1 portablemc --main-dir "$CLIENT_DIR" start 1.20.1 -u "$VIEWER" --join-server 127.0.0.1 \
+  --resolution 1280x720 --jvm-policy system > client.log 2>&1 &
 CLIENT_PID=$!
-trap 'pkill -f net.minecraft.client.main.Main 2>/dev/null || true; kill "$CLIENT_PID" "$SERVER_PID" 2>/dev/null || true' EXIT
+trap 'pkill -f net.minecraft.client.main.Main 2>/dev/null || true; kill "$CLIENT_PID" "$SERVER_PID" "$XVFB_PID" 2>/dev/null || true' EXIT
 
 # the first run downloads the game and its assets
 for _ in $(seq 1 600); do

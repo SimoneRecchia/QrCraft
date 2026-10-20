@@ -25,3 +25,4 @@ e2e/server
 e2e/client
 e2e/client.log
 e2e/shot.ppm
+e2e/xvfb.log

@@ -49,7 +49,7 @@ jobs:
       - name: install a virtual display and software opengl
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends xvfb xauth xdotool imagemagick \
+          sudo apt-get install -y --no-install-recommends xvfb xdotool imagemagick \
             libgl1-mesa-dri libglx-mesa0 libegl1 libxrandr2 libxcursor1 libxi6 libxinerama1 libxxf86vm1 libxtst6
       - name: take the screenshot
         run: e2e/screenshot.sh
