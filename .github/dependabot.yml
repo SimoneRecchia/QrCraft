@@ -1,0 +1,33 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: ci
+
+  # note: dependabot does not track the forge version, since it is assembled
+  # from the minecraft_version/forge_version properties in gradle.properties.
+  # bump those by hand; this entry covers the test dependencies.
+  - package-ecosystem: gradle
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: deps
+    open-pull-requests-limit: 5
+    ignore:
+      # ForgeGradle 6 refuses Gradle 9 ("Versions Gradle 9.0 and newer are not supported yet"),
+      # so the wrapper stays on 8.x until the build moves to a ForgeGradle that accepts it.
+      - dependency-name: gradle-wrapper
+        update-types: [version-update:semver-major]
+
+  # the end-to-end bot: mineflayer has to keep speaking 1.20.1, which every release so far still does
+  - package-ecosystem: npm
+    directory: /e2e
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: deps
+    open-pull-requests-limit: 5
