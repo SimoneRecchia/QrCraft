@@ -1,0 +1,30 @@
+{
+  "qrcraft.help.header": "QrCraft: QR code su mappa",
+  "qrcraft.help.text": "/qr <testo>: un QR code su una mappa",
+  "qrcraft.help.poster": "/qr poster <lato> <testo>: un QR code su un muro di lato×lato mappe",
+  "qrcraft.help.color": "/qr color <codice> <sfondo> <testo>: in due colori delle tinture",
+  "qrcraft.help.book": "/qr book: il libro che hai in mano, per un testo più lungo di quanto permette la chat",
+  "qrcraft.help.literal": "/qr text <testo>: per un testo che inizia con poster, color, book, text o help",
+
+  "qrcraft.created": "Ecco il tuo QR code. Appendi la mappa in una cornice per mostrarlo.",
+  "qrcraft.created.dense": "Il codice è fitto: se un telefono fatica a leggerlo, prova /qr poster 2 con lo stesso testo.",
+  "qrcraft.created.poster": "Ecco il tuo poster QR %1$s×%1$s: %2$s mappe. Appendile in un quadrato di cornici, ognuna dove dice il suo nome.",
+  "qrcraft.dropped": "Inventario pieno: il resto è a terra ai tuoi piedi.",
+
+  "qrcraft.error.blank": "Non c'è niente da codificare.",
+  "qrcraft.error.too_long_single": "Il testo è troppo lungo per una mappa (%1$s byte). Sta in un poster: /qr poster %2$s <testo>",
+  "qrcraft.error.too_long": "Il testo è troppo lungo per un QR code, anche su un poster %1$s×%1$s (%2$s byte).",
+  "qrcraft.error.poster_size": "Su questo server i poster arrivano a %1$s×%1$s.",
+  "qrcraft.error.cooldown": "Aspetta %s s prima di creare un altro QR code.",
+  "qrcraft.error.cost": "Ti servono %1$s mappe vuote nell'inventario, e ne hai %2$s.",
+  "qrcraft.error.no_book": "Tieni in mano un Libro e penna o un Libro scritto.",
+  "qrcraft.error.empty_book": "Il libro è vuoto.",
+  "qrcraft.error.unknown_color": "Colore sconosciuto: %s. Usa un colore delle tinture, come black, white, red o light_blue.",
+  "qrcraft.error.same_color": "Il codice e lo sfondo devono avere colori diversi.",
+  "qrcraft.warn.contrast": "Attenzione: questi due colori sono simili, e un telefono potrebbe non leggere il codice.",
+  "qrcraft.warn.inverted": "Attenzione: un codice chiaro su sfondo scuro non viene letto da tutti gli scanner.",
+
+  "qrcraft.item.name": "QR: %s",
+  "qrcraft.item.tile": "QR %1$s/%2$s: %3$s",
+  "qrcraft.item.position": "Riga %1$s, colonna %2$s di un poster %3$s×%3$s"
+}

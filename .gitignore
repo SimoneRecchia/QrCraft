@@ -18,3 +18,7 @@ eclipse
 run
 run-data
 logs
+
+# end-to-end test (e2e/run.sh)
+e2e/node_modules
+e2e/server
