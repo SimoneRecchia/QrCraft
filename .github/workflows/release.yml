@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: version to release, e.g. 0.1.0-beta.1. a tag that does not exist yet is made on main's head
+        description: version to release, e.g. 0.1.0-beta.1. a tag that does not exist yet is made on master's head
         required: true
         type: string
 
@@ -37,8 +37,8 @@ jobs:
             *-alpha*|*-beta*|*-rc*) echo "prerelease=true" >> "$GITHUB_OUTPUT" ;;
             *) echo "prerelease=false" >> "$GITHUB_OUTPUT" ;;
           esac
-      # an existing tag is released as it stands; a new one is only ever made on main
-      - name: tag main if the tag is new
+      # an existing tag is released as it stands; a new one is only ever made on master
+      - name: tag master if the tag is new
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ inputs.tag }}
@@ -47,8 +47,8 @@ jobs:
             echo "tag $TAG exists, releasing it as it stands"
             exit 0
           fi
-          if [ "$GITHUB_REF" != refs/heads/main ]; then
-            echo "::error::tag $TAG does not exist; run this from main to make it there, or push the tag first"
+          if [ "$GITHUB_REF" != refs/heads/master ]; then
+            echo "::error::tag $TAG does not exist; run this from master to make it there, or push the tag first"
             exit 1
           fi
           gh api "repos/$GITHUB_REPOSITORY/git/refs" -f ref="refs/tags/$TAG" -f sha="$GITHUB_SHA" >/dev/null

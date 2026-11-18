@@ -1,8 +1,11 @@
 name: screenshot
-# run by hand from the actions tab: e2e/screenshot.sh photographs a QR map in an item frame with a vanilla client, and
-# the picture is committed as docs/screenshot.png to the branch the workflow ran on
+# e2e/screenshot.sh photographs a QR map in an item frame with a vanilla client, and the picture is committed as
+# docs/screenshot.png to the branch the workflow ran on. run by hand from the actions tab, or by a push outside master
+# whose message says [screenshots]
 on:
   workflow_dispatch:
+  push:
+    branches-ignore: [master]
 
 permissions:
   contents: write
@@ -12,7 +15,9 @@ concurrency:
 
 jobs:
   screenshot:
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[screenshots]')
     runs-on: ubuntu-24.04
+    timeout-minutes: 45
     steps:
       - name: checkout repository
         uses: actions/checkout@v7
